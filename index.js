@@ -4,12 +4,12 @@ var prompt = require('cli-prompt');
 var static_server = require('./static/index.js');
 var io = require('socket.io').listen(static_server);
 
-io.on('connection', function(socket) {
-    // initial event
-    socket.on('newclient', function(message) {
-        // console.log('new client at: ' + message.url);
-    });
-});
+// io.on('connection', function(socket) {
+//     // initial event
+//     socket.on('newclient', function(message) {
+//         console.log('new client at: ' + message.url);
+//     });
+// });
 io.set('heartbeat interval', 2000);
 io.set('heartbeat timeout', 6000);
 io.set('log level', 1);
