@@ -1,0 +1,16 @@
+{
+  "name": "moblab",
+  "version": "0.0.0",
+  "description": "Proxy to pilot many device browsers at once",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Irae <irae@irae.pro.br>",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "sockjs": "~0.3.8",
+    "send": "~0.1.4",
+    "cli-prompt": "~0.3.2"
+  }
+}
