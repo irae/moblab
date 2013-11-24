@@ -11,6 +11,7 @@
   "dependencies": {
     "send": "~0.1.4",
     "cli-prompt": "~0.3.2",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "johnny-five": "~0.7.5"
   }
 }
