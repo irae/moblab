@@ -39,24 +39,44 @@ function landscapeRight() {
     });
 }
 
-// setup arduino servos
-var five = require('johnny-five');
-var board = new five.Board();
+if (true) { // TODO: command line flag
 
-board.on("ready", function() {
-    var servo1 = new five.Servo(10);
-    var servo2 = new five.Servo(11);
-    servos.push(servo1);
-    servos.push(servo2);
-
-    board.repl.inject({
-        servo1: servo1,
-        servo2: servo2,
-        go: go,
-        reload: reload,
-        portrait: portrait,
-        landscape: landscape,
-        landscapeRight: landscapeRight,
+    // repl interface
+    var repl = require("repl");
+    var session = repl.start({
+        prompt: "moblab > ",
+        input: process.stdin,
+        output: process.stdout,
     });
-});
+    session.on('exit', function () {
+        process.exit();
+    });
 
+    // expose commands to repl
+    session.context.go = go;
+    session.context.reload = reload;
+
+} else {
+
+    // setup arduino servos
+    var five = require('johnny-five');
+    var board = new five.Board();
+
+    board.on("ready", function() {
+        var servo1 = new five.Servo(10);
+        var servo2 = new five.Servo(11);
+        servos.push(servo1);
+        servos.push(servo2);
+
+        board.repl.inject({
+            servo1: servo1,
+            servo2: servo2,
+            go: go,
+            reload: reload,
+            portrait: portrait,
+            landscape: landscape,
+            landscapeRight: landscapeRight,
+        });
+    });
+
+}
