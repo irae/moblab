@@ -1,36 +1,62 @@
 'use strict';
 
-var prompt = require('cli-prompt');
+// setup static server and socket.io for browsers
 var static_server = require('./static/index.js');
 var io = require('socket.io').listen(static_server);
-
-// io.on('connection', function(socket) {
-//     // initial event
-//     socket.on('newclient', function(message) {
-//         console.log('new client at: ' + message.url);
-//     });
-// });
 io.set('heartbeat interval', 2000);
 io.set('heartbeat timeout', 6000);
 io.set('log level', 1);
 
 static_server.listen(3582, '0.0.0.0');
 
-function commandPrompt () {
-    prompt(' moblab > ', function (command) {
-        if (command === 'reload') {
-            io.sockets.emit('reload');
-        }
-        var go = 'go ';
-        var http = 'http://';
-        if (command.indexOf(go) === 0) {
-            var url = command.substr(go.length);
-            if (url.indexOf(http) !== 0) {
-                url = http + url;
-            }
-            io.sockets.emit('go', url);
-        }
-        setTimeout(commandPrompt, 500);
+// commands to the browsers
+function reload() {
+    io.sockets.emit('reload');
+}
+function go(url) {
+    var http = 'http://';
+    if (url.indexOf(http) !== 0) {
+        url = http + url;
+    }
+    io.sockets.emit('go', url);
+}
+
+// commands to the robots
+var servos = [];
+function portrait() {
+    servos.forEach(function(servo) {
+        servo.move(servo.portrait||90);
     });
 }
-commandPrompt();
+function landscape() {
+    servos.forEach(function(servo) {
+        servo.move(servo.landscape||150);
+    });
+}
+function landscapeRight() {
+    servos.forEach(function(servo) {
+        servo.move(servo.landscapeRight||30);
+    });
+}
+
+// setup arduino servos
+var five = require('johnny-five');
+var board = new five.Board();
+
+board.on("ready", function() {
+    var servo1 = new five.Servo(10);
+    var servo2 = new five.Servo(11);
+    servos.push(servo1);
+    servos.push(servo2);
+
+    board.repl.inject({
+        servo1: servo1,
+        servo2: servo2,
+        go: go,
+        reload: reload,
+        portrait: portrait,
+        landscape: landscape,
+        landscapeRight: landscapeRight,
+    });
+});
+
