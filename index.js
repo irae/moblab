@@ -13,6 +13,9 @@ static_server.listen(3582, '0.0.0.0');
 function reload() {
     io.sockets.emit('reload');
 }
+function scrollTo(x, y) {
+    io.sockets.emit('scrollTo', { x:x , y:y });
+}
 function go(url) {
     var http = 'http://';
     if (url.indexOf(http) !== 0) {
@@ -55,6 +58,7 @@ if (true) { // TODO: command line flag
     // expose commands to repl
     session.context.go = go;
     session.context.reload = reload;
+    session.context.scrollTo = scrollTo;
 
 } else {
 
@@ -73,6 +77,7 @@ if (true) { // TODO: command line flag
             servo2: servo2,
             go: go,
             reload: reload,
+            scrollTo: scrollTo,
             portrait: portrait,
             landscape: landscape,
             landscapeRight: landscapeRight,

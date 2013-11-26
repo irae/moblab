@@ -21,6 +21,9 @@
     socket.on('reload', function() {
         document.location.reload();
     });
+    socket.on('scrollTo', function(to) {
+        window.scrollTo(to.x, to.y);
+    });
     socket.on('go', function(url) {
         document.location.reload();
         document.location.href = url;
