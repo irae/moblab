@@ -8,7 +8,7 @@ var master = require('socket.io-client').connect('http://localhost:3582/master',
 });
 
 master.on('connect', function(connection) {
-    console.log('connection', connection);
+    console.log('master conected to server');
     master.on('event', function() {
         console.log('event', arguments);
     });
@@ -32,19 +32,28 @@ function go(url) {
     master.emit('go', url);
 }
 
-// repl interface
-var repl = require("repl");
-var cli = repl.start({
-    prompt: "moblab > ",
-    input: process.stdin,
-    output: process.stdout,
-});
-cli.on('exit', function () {
-    process.exit();
-});
+if (module.parent) {
+    module.exports = {
+        socket: master,
+        go: go,
+        reload: reload,
+        scrollTo: scrollTo,
+    };
+} else {
+    // repl interface
+    var repl = require("repl");
+    var cli = repl.start({
+        prompt: "moblab > ",
+        input: process.stdin,
+        output: process.stdout,
+    });
+    cli.on('exit', function () {
+        process.exit();
+    });
 
-// expose commands to repl
-cli.context.go = go;
-cli.context.reload = reload;
-cli.context.scrollTo = scrollTo;
+    // expose commands to repl
+    cli.context.go = go;
+    cli.context.reload = reload;
+    cli.context.scrollTo = scrollTo;
+}
 
