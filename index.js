@@ -1,27 +1,35 @@
 'use strict';
 
-// setup static server and socket.io for browsers
-var static_server = require('./static/index.js');
-var io = require('socket.io').listen(static_server);
-io.set('heartbeat interval', 2000);
-io.set('heartbeat timeout', 6000);
-io.set('log level', 1);
+var master = require('socket.io-client').connect('http://localhost:3582/master', {
+    'connect timeout': 2000,
+    'max reconnection attempts': 50,
+    // 'force new connection': true,
+    'sync disconnect on unload': true,
+});
 
-static_server.listen(3582, '0.0.0.0');
+master.on('connect', function(connection) {
+    console.log('connection', connection);
+    master.on('event', function() {
+        console.log('event', arguments);
+    });
+    master.on('disconnect', function() {
+        console.log('disconnect', arguments);
+    });
+});
 
 // commands to the browsers
 function reload() {
-    io.sockets.emit('reload');
+    master.emit('reload');
 }
 function scrollTo(x, y) {
-    io.sockets.emit('scrollTo', { x:x , y:y });
+    master.emit('scrollTo', { x:x , y:y });
 }
 function go(url) {
     var http = 'http://';
-    if (url.indexOf(http) !== 0) {
+    if ((url||'').indexOf(http) !== 0) {
         url = http + url;
     }
-    io.sockets.emit('go', url);
+    master.emit('go', url);
 }
 
 // commands to the robots
@@ -68,65 +76,44 @@ function saveConfig() {
 
 var config = require(__dirname + '/config.json');
 
-if (true) { // TODO: command line flag
+// setup arduino servos
+var five = require('johnny-five');
+var board = new five.Board();
 
-    // repl interface
-    var repl = require("repl");
-    var session = repl.start({
-        prompt: "moblab > ",
-        input: process.stdin,
-        output: process.stdout,
-    });
-    session.on('exit', function () {
-        process.exit();
-    });
+board.on("ready", function() {
+    var servo1 = new five.Servo(8);
+    var servo2 = new five.Servo(11);
+    var servo3 = new five.Servo(10);
+    var servo4 = new five.Servo(9);
+    servos.push(servo1);
+    servos.push(servo2);
+    servos.push(servo3);
+    servos.push(servo4);
 
-    // expose commands to repl
-    session.context.go = go;
-    session.context.reload = reload;
-    session.context.scrollTo = scrollTo;
-
-} else {
-
-    // setup arduino servos
-    var five = require('johnny-five');
-    var board = new five.Board();
-
-    board.on("ready", function() {
-        var servo1 = new five.Servo(12);
-        var servo2 = new five.Servo(11);
-        var servo3 = new five.Servo(10);
-        var servo4 = new five.Servo(9);
-        servos.push(servo1);
-        servos.push(servo2);
-        servos.push(servo3);
-        servos.push(servo4);
-
-        servos.forEach(function(servo) {
-            config.servos.forEach(function(servoConfig) {
-                if (servo.pin === servoConfig.pin) {
-                    servo.landscape = servoConfig.landscape;
-                    servo.portrait = servoConfig.portrait;
-                    servo.landscapeRight = servoConfig.landscapeRight;
-                }
-            });
-        });
-
-        portrait();
-
-        board.repl.inject({
-            servo1: servo1,
-            servo2: servo2,
-            servo3: servo3,
-            servo4: servo4,
-            saveConfig: saveConfig,
-            go: go,
-            reload: reload,
-            scrollTo: scrollTo,
-            portrait: portrait,
-            landscape: landscape,
-            landscapeRight: landscapeRight,
+    servos.forEach(function(servo) {
+        config.servos.forEach(function(servoConfig) {
+            if (servo.pin === servoConfig.pin) {
+                servo.landscape = servoConfig.landscape;
+                servo.portrait = servoConfig.portrait;
+                servo.landscapeRight = servoConfig.landscapeRight;
+            }
         });
     });
 
-}
+    portrait();
+
+    board.repl.inject({
+        servo1: servo1,
+        servo2: servo2,
+        servo3: servo3,
+        servo4: servo4,
+        saveConfig: saveConfig,
+        go: go,
+        reload: reload,
+        scrollTo: scrollTo,
+        portrait: portrait,
+        landscape: landscape,
+        landscapeRight: landscapeRight,
+    });
+});
+
