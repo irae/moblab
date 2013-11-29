@@ -5,10 +5,10 @@
     if (typeof io === 'undefined') {
         return setTimeout(moblabStart, 100);
     }
-    var socket = io.connect('http://'+mobLabHost+':3582', {
-        'connect timeout': 2000,
-        'max reconnection attempts': 50,
-        'force new connection': true,
+    var socket = io.connect('http://'+mobLabHost+':3582/client', {
+        // 'connect timeout': 2000,
+        // 'max reconnection attempts': 50,
+        // 'force new connection': true,
         'sync disconnect on unload': true,
     });
     socket.on('connect', function () {
@@ -25,7 +25,6 @@
         window.scrollTo(to.x, to.y);
     });
     socket.on('go', function(url) {
-        document.location.reload();
         document.location.href = url;
     });
 })();
