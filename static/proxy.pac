@@ -1,6 +1,10 @@
 /* global  myIpAddress */
 /* available  isInNet, dnsDomainIs, shExpMatch, myIpAddress */
 
+function debug(message) {
+    // alert(message);
+}
+
 function FindProxyForURL(url, host) {
     'use strict';
 
@@ -9,13 +13,16 @@ function FindProxyForURL(url, host) {
         host === myIpAddress() ||
         host === '192.168.1.2')
         {
+        debug('DIRECT1 ' + url);
         return 'DIRECT';
     }
 
-    if ( ! url.indexOf('http://' !== 0)) {
+    if (!url || url.indexOf('http://') !== 0) {
+        debug('DIRECT2 ' + url);
         return 'DIRECT';
     }
 
-    return 'PROXY 192.168.1.2:8080';
+    debug('PROXY ' + url);
+    return 'PROXY 192.168.1.2:8581';
 }
 
