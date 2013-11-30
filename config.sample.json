@@ -1,0 +1,28 @@
+{
+  "servos": [
+    {
+      "pin": 10,
+      "portrait": 90,
+      "landscape": 175,
+      "landscapeRight": 10
+    },
+    {
+      "pin": 11,
+      "portrait": 90,
+      "landscape": 175,
+      "landscapeRight": 10
+    },
+    {
+      "pin": 12,
+      "portrait": 90,
+      "landscape": 175,
+      "landscapeRight": 10
+    },
+    {
+      "pin": 13,
+      "portrait": 90,
+      "landscape": 175,
+      "landscapeRight": 10
+    }
+  ]
+}
