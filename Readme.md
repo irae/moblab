@@ -29,6 +29,11 @@ $ npm install
 
 5) On a different terminal window, run the moblab controller with `node index.js`
 
+proxy SSL
+=========
+
+We plan on adding on-demand certificate, [for now you can follow instructions here](https://github.com/joeferner/node-http-mitm-proxy).
+
 available commands
 ==================
 
