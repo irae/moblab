@@ -1,16 +1,14 @@
 'use strict';
 
 // setup static server and socket.io for browsers
-var static_server = require('./static/index.js');
+var static_server = require('./lib/static_index');
 var io = require('socket.io').listen(static_server);
-
 // io.set('heartbeat interval', 2 * 1000);
 // io.set('heartbeat timeout', 2.1 * 1000);
 io.set('log level', 1);
 
 var client_channel = io.of('/client');
 var master_channel = io.of('/master');
-
 
 master_channel.on('connection', function(master) {
     console.log('master connection');
