@@ -14,6 +14,7 @@
     "johnny-five": "~0.7.5",
     "socket.io-client": "~0.9.16",
     "http-mitm-proxy": "git://github.com/joeferner/node-http-mitm-proxy.git",
-    "inquirer": "~0.3.5"
+    "inquirer": "~0.3.5",
+    "async": "~0.2.9"
   }
 }
