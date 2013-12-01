@@ -29,7 +29,6 @@ master.on('connect', function(connection) {
             command.push(function(data) {
                 callback.apply(context, arguments);
             });
-            console.log(command);
             master.emit.apply(master, command);
         }
     });

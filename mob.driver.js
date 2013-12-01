@@ -14,7 +14,6 @@ io.on('connection', function(socket) {
         console.log('browser', info);
     });
     socket.on('browser_broadcast', function(command, args, doneAll) {
-        console.log(arguments);
         async.map(io.sockets.clients('browsers'), function (browser, doneOne) {
             browser.emit(command, args, function(data) {
                 var results = [null].concat(Array.prototype.slice.call(arguments));
