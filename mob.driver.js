@@ -4,9 +4,8 @@
 var static_server = require('./lib/static_index');
 var io = require('socket.io').listen(static_server);
 var async = require('async');
-io.set('heartbeat interval', 2 * 1000);
-io.set('heartbeat timeout', 2.1 * 1000);
-io.set('close timeout', 2.2 * 1000);
+io.set('heartbeat interval', 2);
+io.set('heartbeat timeout', 2.1);
 io.set('log level', 1);
 
 io.on('connection', function(socket) {
@@ -15,7 +14,7 @@ io.on('connection', function(socket) {
         // console.log(socket.handshake);
         socket.set('commands', info.commands);
         socket.on('disconnect', function() {
-            console.log('browser disconnect');
+            // console.log('browser disconnect');
             socket.leave('browsers');
         });
     });

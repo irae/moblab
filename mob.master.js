@@ -1,9 +1,7 @@
 'use strict';
 
 var master = require('socket.io-client').connect('http://localhost:3582/', {
-    // 'connect timeout': 2000,
-    // 'max reconnection attempts': 50,
-    // 'force new connection': true,
+    'connect timeout': 2000,
     'sync disconnect on unload': true,
 });
 

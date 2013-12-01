@@ -6,9 +6,7 @@
         return setTimeout(moblabStart, 100);
     }
     var socket = io.connect('http://'+mobLabHost+':3582/', {
-        'connect timeout': 2000,
         'max reconnection attempts': 5000000,
-        // 'force new connection': true,
         'sync disconnect on unload': true,
     });
 
@@ -54,9 +52,18 @@
     Object.keys(mobLabCommands).forEach(function(command) {
         socket.on(command, mobLabCommands[command]);
     });
+
     socket.on('disconnect', function() {
         console.log('socket disconnected');
     });
 
+    var tryReconnect = function() {
+        if (socket.socket.connected === false &&
+            socket.socket.connecting === false) {
+            // use a connect() or reconnect() here if you want
+            socket.socket.reconnect();
+        }
+    };
+    setInterval(tryReconnect, 2000);
 
 })();
