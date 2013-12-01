@@ -10,35 +10,52 @@
         'sync disconnect on unload': true,
     });
 
+
+
     var mobLabCommands = {
 
         reload: function(args, callback) {
-            callback('ok');
+            callback(null, 'ok');
             document.location.reload();
         },
 
         scrollTo: function(args, callback) {
             window.scrollTo(args[0], args[1]);
-            callback('ok');
+            callback(null, 'ok');
         },
 
         go: function(args, callback) {
             var url = args[0];
-            if (typeof url !== 'string' || !callback) {
-                return callback('error');
-            }
             var http = 'http://';
             if ((url||'').indexOf(http) !== 0) {
                 url = http + url;
             }
-            callback('ok');
+            callback(null, 'ok');
             document.location.href = url;
         },
 
-        findElement: function(args, found) {
+        findElement: function(args, callback) {
             var element = document.querySelector(args[0]);
-            found && found(!!element);
+            if (!element) {
+                return callback('element not found');
+            }
+            if (!element.id) {
+                element.id = 'moblab_' + (new Date().getTime()) + ('_') + Math.round(Math.random() * 10000);
+            }
+            callback(null, '#' + element.id);
         },
+
+        elementVisible: function(args, callback) {
+            mobLabCommands.findElement(args, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                var isVisible = document.querySelector(result).offsetHeight > 0;
+                callback(null, isVisible);
+            });
+        },
+
+
 
     };
 

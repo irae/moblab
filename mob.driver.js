@@ -28,10 +28,9 @@ io.on('connection', function(socket) {
                         doneOne(null, 'timeout');
                         browser.disconnect();
                     },2 * 1000);
-                    browser.emit(command, args, function(data) {
+                    browser.emit(command, args, function(error, result) {
                         clearTimeout(maxTime);
-                        var results = [null].concat(Array.prototype.slice.call(arguments));
-                        doneOne.apply(browser, results);
+                        doneOne(error, result);
                     });
                 }
             });
