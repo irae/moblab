@@ -12,7 +12,7 @@ io.set('log level', 1);
 io.on('connection', function(socket) {
     socket.on('browser', function(info) {
         socket.join('browsers');
-        console.log('browser', info.url);
+        // console.log(socket.handshake);
         socket.set('commands', info.commands);
         socket.on('disconnect', function() {
             console.log('browser disconnect');
