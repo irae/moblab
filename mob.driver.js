@@ -12,7 +12,8 @@ io.set('log level', 1);
 io.on('connection', function(socket) {
     socket.on('browser', function(info) {
         socket.join('browsers');
-        console.log('browser', info);
+        console.log('browser', info.url);
+        socket.set('commands', info.commands);
         socket.on('disconnect', function() {
             console.log('browser disconnect');
             socket.leave('browsers');
@@ -20,14 +21,20 @@ io.on('connection', function(socket) {
     });
     socket.on('browser_broadcast', function(command, args, doneAll) {
         async.map(io.sockets.clients('browsers'), function (browser, doneOne) {
-            var maxTime = setTimeout(function() {
-                doneOne(null, 'error');
-                browser.disconnect();
-            },2 * 1000);
-            browser.emit(command, args, function(data) {
-                clearTimeout(maxTime);
-                var results = [null].concat(Array.prototype.slice.call(arguments));
-                doneOne.apply(browser, results);
+            browser.get('commands', function(err, commands) {
+                if (commands.indexOf(command) === -1) {
+                    doneOne(null, 'unknow command');
+                } else {
+                    var maxTime = setTimeout(function() {
+                        doneOne(null, 'timeout');
+                        browser.disconnect();
+                    },2 * 1000);
+                    browser.emit(command, args, function(data) {
+                        clearTimeout(maxTime);
+                        var results = [null].concat(Array.prototype.slice.call(arguments));
+                        doneOne.apply(browser, results);
+                    });
+                }
             });
         }, doneAll);
     });
