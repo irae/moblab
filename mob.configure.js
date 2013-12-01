@@ -88,12 +88,16 @@ function removeServos(callback) {
 if (newConfig.servos.length) {
     removeServosPrompt(function() {
         servoPrompt(function() {
-            config.save(newConfig);
+            config.save(newConfig, function() {
+                console.log('now run `node mob.calibrate_servos.js` if you want to calibrate them!');
+            });
         });
     });
 } else {
     servoPrompt(function() {
-        config.save(newConfig);
+        config.save(newConfig, function() {
+            console.log('now run `node mob.calibrate_servos.js` if you want to calibrate them!');
+        });
     });
 }
 

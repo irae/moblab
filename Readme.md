@@ -1,12 +1,12 @@
-moblab
+Moblab
 ======
 
 An Arduino+JohnnyFive based mobile device testing lab with browser proxying capabilities
 
-requirements
+Requirements
 ============
 
-moblab requires the following:
+If you need turning devices support, Moblab requires the following:
 
 1) A Firmata compatible Arduino board (developed and tested using an Arduino Uno)
 
@@ -21,13 +21,15 @@ running
 $ npm install
 ```
 
-2) Copy the `config.sample.json` file to `config.json`
+2) run `node mob.configure.js` to bootstrap you configuration
 
 3) Run the proxy with `node mob.proxy.js`
 
 4) Configure your devices to use your IP address as a proxy, on port 8581
 
-5) On a different terminal window, run the moblab controller with `node index.js`
+5) On a different terminal window, run the `node mob.master.js` for controlling the browsers
+
+6) On a different terminal window, run the `node mob.servos.js` for controlling the servos
 
 proxy SSL
 =========
