@@ -1,10 +1,10 @@
 'use strict';
 
-var port = 8581;
-
 var Proxy = require('http-mitm-proxy');
 var proxy = Proxy();
-var hostname = '192.168.1.2';
+var port = process.env.MOBLAB_PROXY_PORT ? process.env.MOBLAB_PROXY_PORT : 8581;
+var hostname = process.env.MOBLAB_DRIVER_HOST ? process.env.MOBLAB_DRIVER_HOST : 'localhost';
+var driver_port = process.env.MOBLAB_DRIVER_PORT ? process.env.MOBLAB_DRIVER_PORT : 3581;
 
 proxy.onError(function(ctx, err) {
     console.error('proxy error:', err);
@@ -35,12 +35,12 @@ function mobLabInject(ctx, chunk, callback) {
 
         '    var script = document.createElement("script");'+
         '    script.type = "text/javascript";'+
-        '    script.src = "http://'+hostname+':3582/socket.io/socket.io.js";'+
+        '    script.src = "http://'+hostname+':'+driver_port+'/socket.io/socket.io.js";'+
         '    document.head.appendChild(script);'+
 
         '    var script = document.createElement("script");'+
         '    script.type = "text/javascript";'+
-        '    script.src = "http://'+hostname+':3582/moblab_client.js";'+
+        '    script.src = "http://'+hostname+':'+driver_port+'/moblab_client.js";'+
         '    document.head.appendChild(script);'+
         '}'+
         '</script>';
