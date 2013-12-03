@@ -5,7 +5,7 @@
     if (typeof io === 'undefined') {
         return setTimeout(moblabStart, 100);
     }
-    var socket = io.connect('http://'+mobLabHost+':3582/', {
+    var socket = io.connect('http://'+mobLabHost+'/', {
         'max reconnection attempts': 5000000,
         'sync disconnect on unload': true,
     });

@@ -31,7 +31,7 @@ function mobLabInject(ctx, chunk, callback) {
         '<script>'+
         'if(self==top) {'+
         
-        '    window.mobLabHost = "'+hostname+'";'+
+        '    window.mobLabHost = "'+hostname+':'+driver_port+'";'+
 
         '    var script = document.createElement("script");'+
         '    script.type = "text/javascript";'+

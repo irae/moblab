@@ -1,6 +1,9 @@
 'use strict';
 
-var master = require('socket.io-client').connect('http://localhost:3582/', {
+var driver_hostname = process.env.MOBLAB_DRIVER_HOST ? process.env.MOBLAB_DRIVER_HOST : 'localhost';
+var driver_port = process.env.MOBLAB_DRIVER_PORT ? process.env.MOBLAB_DRIVER_PORT : 3581;
+
+var master = require('socket.io-client').connect('http://'+driver_hostname+':'+driver_port+'/', {
     'connect timeout': 2000,
     'sync disconnect on unload': true,
 });
