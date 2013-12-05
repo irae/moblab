@@ -1,7 +1,7 @@
 'use strict';
 
 var config = require('./lib/config').load();
-var proxy = require('http-mitm-proxy').Proxy();
+var proxy = require('http-mitm-proxy')();
 
 proxy.onError(function(ctx, err) {
     console.error('proxy error:', err);
