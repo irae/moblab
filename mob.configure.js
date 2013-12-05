@@ -1,7 +1,8 @@
 'use strict';
 
-var inquirer = require("inquirer");
 var config = require('./lib/config');
+var fs = require('fs');
+var inquirer = require("inquirer");
 var newConfig = config.load(true); // don't use load(true) outside mob.configure.js
 newConfig.servos = newConfig.servos || [];
 
@@ -42,7 +43,17 @@ function hostsAndPortsQuestions(callback) {
         newConfig.driverHostname = answers.driverHostname;
         newConfig.driverPort = answers.driverPort;
         newConfig.proxyPort = answers.proxyPort;
-        callback && callback();
+        var proxyTemplate = __dirname + '/static/proxy-example.pac';
+        var proxyOut = __dirname + '/static/proxy.pac';
+        console.log('proxyTemplate', proxyTemplate);
+        fs.readFile(proxyTemplate, 'utf8', function(err1, data) {
+            var outString = data;
+            outString = outString.replace(/MOB_PROXY_HOST/g, newConfig.proxyHostname);
+            outString = outString.replace(/MOB_PROXY_PORT/g, newConfig.proxyPort);
+            fs.writeFile(proxyOut, outString, 'utf8', function(err2) {
+                callback && callback();
+            });
+        });
     });
 }
 

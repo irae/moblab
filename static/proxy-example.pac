@@ -6,6 +6,6 @@ function FindProxyForURL(url, host) {
         return 'DIRECT';
     }
 
-    return 'PROXY 192.168.1.2:8581';
+    return 'PROXY MOB_PROXY_HOST:MOB_PROXY_PORT';
 }
 
