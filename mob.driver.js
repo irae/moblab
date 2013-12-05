@@ -1,8 +1,7 @@
 'use strict';
 
 // setup static server and socket.io for browsers
-var hostname = process.env.MOBLAB_DRIVER_HOST ? process.env.MOBLAB_DRIVER_HOST : 'localhost';
-var driver_port = process.env.MOBLAB_DRIVER_PORT ? process.env.MOBLAB_DRIVER_PORT : 3581;
+var config = require('./lib/config').load();
 var static_server = require('./lib/static_index');
 var io = require('socket.io').listen(static_server);
 var async = require('async');
@@ -40,5 +39,5 @@ io.on('connection', function(socket) {
     });
 });
 
-static_server.listen(driver_port, '0.0.0.0');
-console.log('MobLab Driver listening on '+hostname+':'+driver_port);
+static_server.listen(config.driverPort, '0.0.0.0');
+console.log('MobLab Driver listening on '+config.driverHostname+':'+config.driverPort);

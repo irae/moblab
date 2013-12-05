@@ -5,6 +5,49 @@ var config = require('./lib/config');
 var newConfig = config.load(true); // don't use load(true) outside mob.configure.js
 newConfig.servos = newConfig.servos || [];
 
+function numberValidation(input) {
+    input = parseInt(input, 10);
+    if (!isNaN(input) && input >= 0) {
+        return true;
+    } else {
+        return 'Expecting a number';
+    }
+}
+
+function hostsAndPortsQuestions(callback) {
+    inquirer.prompt([{
+        type: 'input',
+        name: 'proxyHostname',
+        default: newConfig.proxyHostname || require('os').hostname(),
+        message: 'What hostname do you want to use for the **proxy** ?'
+    },{
+        type: 'input',
+        name: 'proxyPort',
+        default: newConfig.proxyPort || 8581,
+        message: 'What port do you want to use for the **proxy** ?',
+        validate: numberValidation,
+    },{
+        type: 'input',
+        name: 'driverHostname',
+        default: newConfig.driverHostname || require('os').hostname(),
+        message: 'What hostname do you want to use for the **dirver** ?'
+    },{
+        type: 'input',
+        name: 'driverPort',
+        default: newConfig.driverPort || 3581,
+        message: 'What port do you want to use for the **dirver** ?',
+        validate: numberValidation,
+    }], function( answers ) {
+        newConfig.proxyHostname = answers.proxyHostname;
+        newConfig.driverHostname = answers.driverHostname;
+        newConfig.driverPort = answers.driverPort;
+        newConfig.proxyPort = answers.proxyPort;
+        callback && callback();
+    });
+}
+
+
+
 function servoPrompt(callback) {
     console.log('\nyou have ' + newConfig.servos.length + ' servos configured');
     inquirer.prompt([{
@@ -26,14 +69,7 @@ function addServo(callback) {
         type: 'input',
         name: 'pin',
         message: 'On which pin is this servo?',
-        validate: function(input) {
-            input = parseInt(input, 10);
-            if (!isNaN(input) && input >= 0) {
-                return true;
-            } else {
-                return 'invalid pin number';
-            }
-        },
+        validate: numberValidation,
     }], function( answers ) {
         newConfig.servos.push({
             pin: answers.pin
@@ -85,19 +121,20 @@ function removeServos(callback) {
 
 }
 
-if (newConfig.servos.length) {
-    removeServosPrompt(function() {
+hostsAndPortsQuestions(function() {
+    if (newConfig.servos.length) {
+        removeServosPrompt(function() {
+            servoPrompt(function() {
+                config.save(newConfig, function() {
+                    console.log('now run `node mob.calibrate_servos.js` if you want to calibrate them!');
+                });
+            });
+        });
+    } else {
         servoPrompt(function() {
             config.save(newConfig, function() {
                 console.log('now run `node mob.calibrate_servos.js` if you want to calibrate them!');
             });
         });
-    });
-} else {
-    servoPrompt(function() {
-        config.save(newConfig, function() {
-            console.log('now run `node mob.calibrate_servos.js` if you want to calibrate them!');
-        });
-    });
-}
-
+    }
+});

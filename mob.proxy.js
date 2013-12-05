@@ -1,10 +1,7 @@
 'use strict';
 
-var Proxy = require('http-mitm-proxy');
-var proxy = Proxy();
-var port = process.env.MOBLAB_PROXY_PORT ? process.env.MOBLAB_PROXY_PORT : 8581;
-var hostname = process.env.MOBLAB_DRIVER_HOST ? process.env.MOBLAB_DRIVER_HOST : 'localhost';
-var driver_port = process.env.MOBLAB_DRIVER_PORT ? process.env.MOBLAB_DRIVER_PORT : 3581;
+var config = require('./lib/config').load();
+var proxy = require('http-mitm-proxy').Proxy();
 
 proxy.onError(function(ctx, err) {
     console.error('proxy error:', err);
@@ -31,16 +28,16 @@ function mobLabInject(ctx, chunk, callback) {
         '<script>'+
         'if(self==top) {'+
         
-        '    window.mobLabHost = "'+hostname+':'+driver_port+'";'+
+        '    window.mobLabHost = "'+config.driverHostname+':'+config.driverPort+'";'+
 
         '    var script = document.createElement("script");'+
         '    script.type = "text/javascript";'+
-        '    script.src = "http://'+hostname+':'+driver_port+'/socket.io/socket.io.js";'+
+        '    script.src = "http://'+config.driverHostname+':'+config.driverPort+'/socket.io/socket.io.js";'+
         '    document.head.appendChild(script);'+
 
         '    var script = document.createElement("script");'+
         '    script.type = "text/javascript";'+
-        '    script.src = "http://'+hostname+':'+driver_port+'/moblab_client.js";'+
+        '    script.src = "http://'+config.driverHostname+':'+config.driverPort+'/moblab_client.js";'+
         '    document.head.appendChild(script);'+
         '}'+
         '</script>';
@@ -77,7 +74,7 @@ process.on('uncaughtException',function(err){
 });
 
 proxy.listen({
-    port: port
+    port: config.proxyPort
 });
-console.log('MobLab Proxy listening on ' + port);
+console.log('MobLab Proxy listening on ' + config.proxyPort);
 
